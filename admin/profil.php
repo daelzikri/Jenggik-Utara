@@ -8,7 +8,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $judul = $_POST['judul_profil'] ?? '';
     $potensi = $_POST['potensi_desa'] ?? '';
     $informasi = $_POST['informasi_desa'] ?? '';
-    $gambar = $_POST['gambar_desa'] ?? '';
+    
+    // Handle image upload
+    $gambar = $_POST['old_gambar_desa'] ?? '';
+    if (isset($_FILES['gambar_desa']) && $_FILES['gambar_desa']['error'] === UPLOAD_ERR_OK) {
+        $targetDir = '../assets/beranda/';
+        if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+        $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9.\-_]/', '', basename($_FILES['gambar_desa']["name"]));
+        $targetPath = $targetDir . $filename;
+        if (move_uploaded_file($_FILES['gambar_desa']["tmp_name"], $targetPath)) {
+            $gambar = substr($targetPath, 3); // Remove '../' for DB
+        }
+    }
 
     if (!empty($judul) && !empty($potensi) && !empty($informasi)) {
         try {
@@ -41,7 +52,7 @@ if ($row = $stmt->fetch()) {
 <?php endif; ?>
 
 <div class="card">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label>Judul Profil</label>
             <input type="text" name="judul_profil" class="form-control" value="<?= htmlspecialchars($profil['judul_profil'] ?? '') ?>" required>
@@ -55,9 +66,12 @@ if ($row = $stmt->fetch()) {
             <textarea name="informasi_desa" class="form-control" rows="5" required><?= htmlspecialchars($profil['informasi_desa'] ?? '') ?></textarea>
         </div>
         <div class="form-group">
-            <label>URL Gambar (Pemandangan/Profil)</label>
-            <input type="text" name="gambar_desa" class="form-control" value="<?= htmlspecialchars($profil['gambar_desa'] ?? '') ?>">
-            <small style="color:#777;">Masukkan link/URL gambar, contoh: https://example.com/gambar.jpg</small>
+            <label>Upload Gambar (Pemandangan/Profil) - Biarkan kosong jika tidak ingin mengubah</label>
+            <input type="file" name="gambar_desa" class="form-control" accept="image/*">
+            <input type="hidden" name="old_gambar_desa" value="<?= htmlspecialchars($profil['gambar_desa'] ?? '') ?>">
+            <?php if (!empty($profil['gambar_desa'])): ?>
+                <img src="../<?= htmlspecialchars($profil['gambar_desa']) ?>" style="width:150px; margin-top:10px; border-radius:5px;">
+            <?php endif; ?>
         </div>
         <button type="submit" class="btn btn-success">Simpan Perubahan</button>
     </form>

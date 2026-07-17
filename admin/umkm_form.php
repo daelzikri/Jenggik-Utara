@@ -23,14 +23,34 @@ if ($is_edit) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Helper function for upload
+    function handleUpload($fileArray, $targetDir = '../assets/umkm/') {
+        if (isset($fileArray) && $fileArray['error'] === UPLOAD_ERR_OK) {
+            if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+            $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9.\-_]/', '', basename($fileArray["name"]));
+            $targetPath = $targetDir . $filename;
+            if (move_uploaded_file($fileArray["tmp_name"], $targetPath)) {
+                return substr($targetPath, 3); // Remove '../' for DB
+            }
+        }
+        return false;
+    }
     $nama = $_POST['nama_produk'] ?? '';
     $tagline = $_POST['tagline'] ?? '';
     $deskripsi = $_POST['deskripsi'] ?? '';
     $latar = $_POST['latar_belakang_usaha'] ?? '';
     $info = $_POST['informasi_tambahan'] ?? '';
-    $gambar = $_POST['gambar_umkm'] ?? '';
-    $logo = $_POST['logo_umkm'] ?? '';
-    $proses = $_POST['proses_umkm'] ?? '';
+    $gambar = $_POST['old_gambar_umkm'] ?? '';
+    $newGambar = handleUpload($_FILES['gambar_umkm'] ?? null);
+    if ($newGambar) $gambar = $newGambar;
+
+    $logo = $_POST['old_logo_umkm'] ?? '';
+    $newLogo = handleUpload($_FILES['logo_umkm'] ?? null);
+    if ($newLogo) $logo = $newLogo;
+
+    $proses = $_POST['old_proses_umkm'] ?? '';
+    $newProses = handleUpload($_FILES['proses_umkm'] ?? null);
+    if ($newProses) $proses = $newProses;
     
     // Slug generation from name if empty
     $slug = $_POST['slug'] ?? '';
@@ -97,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php endif; ?>
 
 <div class="card">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         <h3 style="margin-top:0;">Informasi Produk</h3>
         <div class="form-group">
             <label>Nama Produk</label>
@@ -126,16 +146,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <h3>Galeri & Foto</h3>
         <div class="form-group">
-            <label>URL Foto Produk Utama</label>
-            <input type="text" name="gambar_umkm" class="form-control" value="<?= htmlspecialchars($umkm['gambar_umkm'] ?? '') ?>" placeholder="https://example.com/foto_produk.jpg">
+            <label>Upload Foto Produk Utama (Biarkan kosong jika tidak ingin mengubah)</label>
+            <input type="file" name="gambar_umkm" class="form-control" accept="image/*">
+            <input type="hidden" name="old_gambar_umkm" value="<?= htmlspecialchars($umkm['gambar_umkm'] ?? '') ?>">
+            <?php if (!empty($umkm['gambar_umkm'])): ?>
+                <img src="../<?= htmlspecialchars($umkm['gambar_umkm']) ?>" style="width:100px; margin-top:10px; border-radius:5px;">
+            <?php endif; ?>
         </div>
         <div class="form-group">
-            <label>URL Foto Logo UMKM (Opsional)</label>
-            <input type="text" name="logo_umkm" class="form-control" value="<?= htmlspecialchars($umkm['logo_umkm'] ?? '') ?>" placeholder="https://example.com/logo.jpg">
+            <label>Upload Foto Logo UMKM (Opsional)</label>
+            <input type="file" name="logo_umkm" class="form-control" accept="image/*">
+            <input type="hidden" name="old_logo_umkm" value="<?= htmlspecialchars($umkm['logo_umkm'] ?? '') ?>">
+            <?php if (!empty($umkm['logo_umkm'])): ?>
+                <img src="../<?= htmlspecialchars($umkm['logo_umkm']) ?>" style="width:100px; margin-top:10px; border-radius:5px;">
+            <?php endif; ?>
         </div>
         <div class="form-group">
-            <label>URL Foto Proses Produksi (Opsional)</label>
-            <input type="text" name="proses_umkm" class="form-control" value="<?= htmlspecialchars($umkm['proses_umkm'] ?? '') ?>" placeholder="https://example.com/proses.jpg">
+            <label>Upload Foto Proses Produksi (Opsional)</label>
+            <input type="file" name="proses_umkm" class="form-control" accept="image/*">
+            <input type="hidden" name="old_proses_umkm" value="<?= htmlspecialchars($umkm['proses_umkm'] ?? '') ?>">
+            <?php if (!empty($umkm['proses_umkm'])): ?>
+                <img src="../<?= htmlspecialchars($umkm['proses_umkm']) ?>" style="width:100px; margin-top:10px; border-radius:5px;">
+            <?php endif; ?>
         </div>
 
         <h3>Kontak WhatsApp</h3>
