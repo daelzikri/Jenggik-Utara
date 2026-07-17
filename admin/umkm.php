@@ -43,7 +43,13 @@ $umkm_list = $stmt->fetchAll();
                 <tr>
                     <td><?= $row['id'] ?></td>
                     <td>
-                        <img src="<?= htmlspecialchars($row['gambar_umkm']) ?>" alt="Gambar" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                        <?php
+                            $imgSrc = htmlspecialchars($row['gambar_umkm']);
+                            if (strpos($imgSrc, 'http') !== 0 && strpos($imgSrc, '/') !== 0) {
+                                $imgSrc = '../' . $imgSrc;
+                            }
+                        ?>
+                        <img src="<?= $imgSrc ?>" alt="Gambar" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
                     </td>
                     <td><?= htmlspecialchars($row['nama_produk']) ?></td>
                     <td><?= htmlspecialchars($row['tagline']) ?></td>
