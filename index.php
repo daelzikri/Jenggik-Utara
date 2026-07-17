@@ -176,7 +176,7 @@ if ($pdo) {
             </div>
             <div class="profile-text">
                 <h3 style="font-size: 2.2rem; color: var(--primary-dark); font-weight: 800; line-height: 1.2; margin-bottom: 1rem;"><?= htmlspecialchars($profil_desa['judul_profil']) ?></h3>
-                <p style="margin-bottom: 20px; font-size: 1.1rem; color: #555;"><?= nl2br(htmlspecialchars($profil_desa['informasi_desa'])) ?></p>
+                <p style="margin-bottom: 20px; font-size: 1.1rem; color: #555; text-align: justify;"><?= nl2br(htmlspecialchars($profil_desa['informasi_desa'])) ?></p>
                 <div style="display: flex; gap: 2rem; margin-top: 2rem;">
                     <div>
                         <h4 style="font-size: 1.8rem; color: var(--secondary-color); font-weight: 800; margin-bottom: 5px;">100%</h4>
@@ -196,7 +196,7 @@ if ($pdo) {
     <div style="width: 100%; height: 6px; background: linear-gradient(90deg, transparent, rgba(26,54,38,0.2), transparent); margin-top: 2rem;"></div>
     <section id="umkm" style="position: relative; padding: 5rem 5% 6rem; background: var(--primary-light); max-width: 100%;">
         <div style="max-width: 1400px; margin: 0 auto;">
-            <h2 class="section-title" style="color: var(--primary-dark);">Earthy Creations</h2>
+            <h2 class="section-title" style="color: var(--primary-dark);">Produk Unggulan Desa</h2>
             <div class="product-grid">
             <?php foreach($umkm_sorotan as $umkm): ?>
             <div class="product-card">
