@@ -10,29 +10,32 @@ require_once '../backend/koneksi.php';
     <title>Admin Dashboard - Desa Jenggik</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; margin: 0; display: flex; min-height: 100vh; }
-        .sidebar { width: 250px; background: #2c3e50; color: white; display: flex; flex-direction: column; }
-        .sidebar h2 { text-align: center; padding: 20px 0; margin: 0; background: #1a252f; font-size: 1.5rem; }
-        .sidebar a { color: #ecf0f1; text-decoration: none; padding: 15px 20px; display: block; transition: 0.3s; border-bottom: 1px solid #34495e; }
-        .sidebar a:hover { background: #34495e; padding-left: 25px; }
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .btn { padding: 8px 15px; background: #3498db; color: white; text-decoration: none; border-radius: 5px; border: none; cursor: pointer; transition: 0.3s; }
-        .btn:hover { background: #2980b9; }
-        .btn-danger { background: #e74c3c; }
-        .btn-danger:hover { background: #c0392b; }
-        .btn-success { background: #2ecc71; }
-        .btn-success:hover { background: #27ae60; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        table th { background-color: #f8f9fa; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit; }
-        .alert { padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: #1e293b; color: white; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+        .sidebar h2 { text-align: center; padding: 25px 0; margin: 0; background: #0f172a; font-size: 1.5rem; letter-spacing: 1px; }
+        .sidebar a { color: #cbd5e1; text-decoration: none; padding: 16px 25px; display: block; transition: all 0.3s ease; border-left: 4px solid transparent; border-bottom: 1px solid #334155; }
+        .sidebar a:hover { background: #334155; color: #ffffff; border-left-color: #3b82f6; padding-left: 30px; }
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 20px 30px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); margin-bottom: 25px; }
+        .btn { padding: 10px 18px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; border: none; cursor: pointer; transition: 0.3s; font-weight: 500; display: inline-block; }
+        .btn:hover { background: #2563eb; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4); }
+        .btn-danger { background: #ef4444; }
+        .btn-danger:hover { background: #dc2626; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.4); }
+        .btn-success { background: #22c55e; }
+        .btn-success:hover { background: #16a34a; box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.4); }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; }
+        table th, table td { padding: 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        table th { background-color: #f8fafc; font-weight: 600; color: #475569; }
+        table tr:hover td { background-color: #f1f5f9; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #334155; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-family: inherit; transition: border-color 0.3s; }
+        .form-control:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .alert { padding: 15px 20px; border-radius: 6px; margin-bottom: 25px; font-weight: 500; }
+        .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
     </style>
 </head>
 <body>

@@ -54,6 +54,7 @@ if ($pdo) {
         
         $product['no_wa'] = $kontak ? $kontak['no_wa'] : '628000000000';
         $product['pesan_wa'] = $kontak ? $kontak['pesan_wa_default'] : 'Halo, saya tertarik dengan produk ini.';
+        $product['link_facebook'] = $kontak ? $kontak['link_facebook'] : '';
     }
 } 
 
@@ -196,12 +197,14 @@ $wa_url = "https://wa.me/" . $product['no_wa'] . "?text=" . urlencode($product['
                                 </svg>
                                 WhatsApp
                             </a>
-                            <a href="https://facebook.com" target="_blank" class="btn btn-fb" style="flex: 1; min-width: 200px;">
+                            <?php if(!empty($product['link_facebook'])): ?>
+                            <a href="<?= htmlspecialchars($product['link_facebook']) ?>" target="_blank" class="btn btn-fb" style="flex: 1; min-width: 200px;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                                     <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"/>
                                 </svg>
                                 Facebook
                             </a>
+                            <?php endif; ?>
                         </div>
                         <p style="text-align: center; font-size: 0.85rem; color: #888; margin-top: 10px;">
                             Anda akan diarahkan langsung ke WhatsApp pengrajin UMKM ini.

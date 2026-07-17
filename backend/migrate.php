@@ -40,6 +40,13 @@ try {
         echo "Kolom proses_umkm berhasil ditambahkan.\n";
     }
 
+    // 4. Alter tabel kontak menambahkan link_facebook
+    $stmt = $pdo->query("SHOW COLUMNS FROM `kontak` LIKE 'link_facebook'");
+    if ($stmt->rowCount() == 0) {
+        $pdo->exec("ALTER TABLE `kontak` ADD COLUMN `link_facebook` varchar(255) DEFAULT NULL");
+        echo "Kolom link_facebook berhasil ditambahkan.\n";
+    }
+
     echo "Migrasi database selesai dengan sukses!\n";
 } catch (PDOException $e) {
     echo "Terjadi kesalahan migrasi: " . $e->getMessage() . "\n";

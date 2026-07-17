@@ -87,16 +87,17 @@ CREATE TABLE `kontak` (
   `id` int(11) NOT NULL,
   `umkm_id` int(11) NOT NULL,
   `no_wa` varchar(20) NOT NULL,
-  `pesan_wa_default` text NOT NULL
+  `pesan_wa_default` text NOT NULL,
+  `link_facebook` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `kontak`
 --
 
-INSERT INTO `kontak` (`id`, `umkm_id`, `no_wa`, `pesan_wa_default`) VALUES
-(1, 1, '6281234567890', 'Halo Inak Khaeril Alpaeni, saya tertarik memesan Jajanan Tradisional Lombok untuk acara saya. Boleh diskusi pesanannya?'),
-(2, 2, '6281234567891', 'Halo Bapak Satar, saya tertarik memesan produk Gula Aren atau Anyaman Bambu. Boleh diskusi?');
+INSERT INTO `kontak` (`id`, `umkm_id`, `no_wa`, `pesan_wa_default`, `link_facebook`) VALUES
+(1, 1, '6281234567890', 'Halo Inak Khaeril Alpaeni, saya tertarik memesan Jajanan Tradisional Lombok untuk acara saya. Boleh diskusi pesanannya?', NULL),
+(2, 2, '6281234567891', 'Halo Bapak Satar, saya tertarik memesan produk Gula Aren atau Anyaman Bambu. Boleh diskusi?', NULL);
 
 --
 -- Indexes for dumped tables

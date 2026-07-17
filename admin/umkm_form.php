@@ -9,12 +9,12 @@ $error = '';
 $umkm = [
     'nama_produk' => '', 'tagline' => '', 'deskripsi' => '', 'latar_belakang_usaha' => '', 'informasi_tambahan' => '', 
     'gambar_umkm' => '', 'logo_umkm' => '', 'proses_umkm' => '', 'slug' => '',
-    'no_wa' => '', 'pesan_wa_default' => ''
+    'no_wa' => '', 'pesan_wa_default' => '', 'link_facebook' => ''
 ];
 
 if ($is_edit) {
     // Fetch UMKM + Kontak
-    $stmt = $pdo->prepare("SELECT u.*, k.no_wa, k.pesan_wa_default FROM umkm u LEFT JOIN kontak k ON u.id = k.umkm_id WHERE u.id = ?");
+    $stmt = $pdo->prepare("SELECT u.*, k.no_wa, k.pesan_wa_default, k.link_facebook FROM umkm u LEFT JOIN kontak k ON u.id = k.umkm_id WHERE u.id = ?");
     $stmt->execute([$id]);
     $row = $stmt->fetch();
     if ($row) {
@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $no_wa = $_POST['no_wa'] ?? '';
     $pesan_wa = $_POST['pesan_wa_default'] ?? '';
+    $link_facebook = $_POST['link_facebook'] ?? '';
 
     if (!empty($nama) && !empty($deskripsi)) {
         try {
@@ -53,9 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt_check = $pdo->prepare("SELECT id FROM kontak WHERE umkm_id=?");
                 $stmt_check->execute([$id]);
                 if ($stmt_check->rowCount() > 0) {
-                    $pdo->prepare("UPDATE kontak SET no_wa=?, pesan_wa_default=? WHERE umkm_id=?")->execute([$no_wa, $pesan_wa, $id]);
+                    $pdo->prepare("UPDATE kontak SET no_wa=?, pesan_wa_default=?, link_facebook=? WHERE umkm_id=?")->execute([$no_wa, $pesan_wa, $link_facebook, $id]);
                 } else {
-                    $pdo->prepare("INSERT INTO kontak (umkm_id, no_wa, pesan_wa_default) VALUES (?, ?, ?)")->execute([$id, $no_wa, $pesan_wa]);
+                    $pdo->prepare("INSERT INTO kontak (umkm_id, no_wa, pesan_wa_default, link_facebook) VALUES (?, ?, ?, ?)")->execute([$id, $no_wa, $pesan_wa, $link_facebook]);
                 }
                 $message = "Data UMKM berhasil diupdate!";
             } else {
@@ -64,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$nama, $tagline, $deskripsi, $latar, $info, $gambar, $logo, $proses, $slug]);
                 $new_id = $pdo->lastInsertId();
 
-                $pdo->prepare("INSERT INTO kontak (umkm_id, no_wa, pesan_wa_default) VALUES (?, ?, ?)")->execute([$new_id, $no_wa, $pesan_wa]);
+                $pdo->prepare("INSERT INTO kontak (umkm_id, no_wa, pesan_wa_default, link_facebook) VALUES (?, ?, ?, ?)")->execute([$new_id, $no_wa, $pesan_wa, $link_facebook]);
                 $message = "Data UMKM baru berhasil ditambahkan!";
                 $is_edit = true;
                 $id = $new_id;
@@ -72,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->commit();
             
             // Refresh data
-            $stmt = $pdo->prepare("SELECT u.*, k.no_wa, k.pesan_wa_default FROM umkm u LEFT JOIN kontak k ON u.id = k.umkm_id WHERE u.id = ?");
+            $stmt = $pdo->prepare("SELECT u.*, k.no_wa, k.pesan_wa_default, k.link_facebook FROM umkm u LEFT JOIN kontak k ON u.id = k.umkm_id WHERE u.id = ?");
             $stmt->execute([$id]);
             $umkm = $stmt->fetch();
             
@@ -145,6 +146,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-group">
             <label>Pesan Otomatis (Default WA)</label>
             <textarea name="pesan_wa_default" class="form-control" rows="2"><?= htmlspecialchars($umkm['pesan_wa_default'] ?? '') ?></textarea>
+        </div>
+        <div class="form-group">
+            <label>Link Facebook (Opsional)</label>
+            <input type="text" name="link_facebook" class="form-control" value="<?= htmlspecialchars($umkm['link_facebook'] ?? '') ?>" placeholder="https://facebook.com/username">
         </div>
 
         <button type="submit" class="btn btn-success"><?= $is_edit ? 'Simpan Perubahan' : 'Tambah UMKM' ?></button>
