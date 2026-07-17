@@ -54,8 +54,10 @@ $umkm_list = $stmt->fetchAll();
                     <td><?= htmlspecialchars($row['nama_produk']) ?></td>
                     <td><?= htmlspecialchars($row['tagline']) ?></td>
                     <td>
-                        <a href="umkm_form.php?id=<?= $row['id'] ?>" class="btn">Edit</a>
-                        <a href="umkm.php?delete=<?= $row['id'] ?>" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus data UMKM ini?');">Hapus</a>
+                        <div class="action-buttons">
+                            <a href="umkm_form.php?id=<?= $row['id'] ?>" class="btn btn-sm">Edit</a>
+                            <a href="umkm.php?delete=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data UMKM ini?');">Hapus</a>
+                        </div>
                     </td>
                 </tr>
                 <?php endforeach; ?>

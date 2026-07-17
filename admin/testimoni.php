@@ -92,7 +92,9 @@ $testimoni_list = $stmt->fetchAll();
                     <td><?= $row['rating'] ?> ★</td>
                     <td><?= htmlspecialchars($row['isi_testimoni']) ?></td>
                     <td>
-                        <a href="testimoni.php?delete=<?= $row['id'] ?>" class="btn btn-danger" onclick="return confirm('Hapus testimoni ini?');">Hapus</a>
+                        <div class="action-buttons">
+                            <a href="testimoni.php?delete=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus testimoni ini?');">Hapus</a>
+                        </div>
                     </td>
                 </tr>
                 <?php endforeach; ?>

@@ -35,7 +35,8 @@ require_once '../backend/koneksi.php';
         .form-control:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
         .alert { padding: 15px 20px; border-radius: 6px; margin-bottom: 25px; font-weight: 500; }
         .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .btn-sm { padding: 6px 12px; font-size: 0.85rem; border-radius: 4px; }
     </style>
 </head>
 <body>
