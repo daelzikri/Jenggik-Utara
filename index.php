@@ -59,8 +59,8 @@ if ($pdo) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1A3626">
-    <meta name="description" content="Website resmi Desa Jenggik Utara. Jelajahi keindahan alam, potensi desa, dan katalog lengkap produk unggulan UMKM lokal kami seperti Gula Aren dan Anyaman Bambu.">
-    <meta name="keywords" content="Desa Jenggik Utara, KKN PMD UNRAM, UMKM Desa, Gula Aren Jenggik, Anyaman Bambu, Wisata Desa Jenggik, Karsaloka, Produk Lokal Lombok Timur">
+    <meta name="description" content="Jenggik Utara - Website resmi Desa Jenggik Utara. Jelajahi keindahan alam, potensi desa, dan katalog lengkap produk unggulan UMKM lokal kami seperti Gula Aren dan Anyaman Bambu.">
+    <meta name="keywords" content="Jenggik Utara, Desa Jenggik Utara, KKN PMD UNRAM, UMKM Desa Jenggik Utara, Gula Aren Jenggik Utara, Anyaman Bambu, Wisata Desa Jenggik Utara, Karsaloka, Produk Lokal Lombok Timur">
     <meta name="author" content="Pemdes Jenggik Utara">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Indonesian">
@@ -69,18 +69,18 @@ if ($pdo) {
     <meta property="og:locale" content="id_ID">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://umkmjenggikutara.com/">
-    <meta property="og:title" content="Desa Jenggik - Portal Komunitas & Gerai UMKM Terpadu">
+    <meta property="og:title" content="Desa Jenggik Utara - Portal Komunitas & Gerai UMKM Terpadu">
     <meta property="og:description" content="Jelajahi keindahan alam dan potensi UMKM lokal Desa Jenggik Utara. Temukan produk autentik langsung dari pengrajin.">
     <meta property="og:image" content="https://umkmjenggikutara.com/assets/beranda/beranda1.jpg">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://umkmjenggikutara.com/">
-    <meta property="twitter:title" content="Desa Jenggik - Portal Komunitas & Gerai UMKM Terpadu">
+    <meta property="twitter:title" content="Desa Jenggik Utara - Portal Komunitas & Gerai UMKM Terpadu">
     <meta property="twitter:description" content="Jelajahi keindahan alam dan potensi UMKM lokal Desa Jenggik Utara. Temukan produk autentik langsung dari pengrajin.">
     <meta property="twitter:image" content="https://umkmjenggikutara.com/assets/beranda/beranda1.jpg">
 
-    <title>Desa Jenggik - Portal Komunitas & Gerai UMKM Terpadu</title>
+    <title>Desa Jenggik Utara - Portal Komunitas & Gerai UMKM Terpadu</title>
     <link rel="canonical" href="https://umkmjenggikutara.com/">
     
     <!-- Favicon / App Icons -->

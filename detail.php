@@ -73,7 +73,7 @@ $wa_url = "https://wa.me/" . $product['no_wa'] . "?text=" . urlencode($product['
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1A3626">
     <meta name="description" content="<?= htmlspecialchars(substr(strip_tags($product['deskripsi']), 0, 155)) ?>...">
-    <meta name="keywords" content="<?= htmlspecialchars($product['nama_produk']) ?>, UMKM Desa Jenggik Utara, Produk Lokal, Gula Aren, Karsaloka">
+    <meta name="keywords" content="Jenggik Utara, <?= htmlspecialchars($product['nama_produk']) ?>, UMKM Desa Jenggik Utara, Produk Lokal Jenggik Utara, Gula Aren Jenggik Utara, Karsaloka">
     <meta name="author" content="Pemdes Jenggik Utara">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Indonesian">
@@ -82,18 +82,18 @@ $wa_url = "https://wa.me/" . $product['no_wa'] . "?text=" . urlencode($product['
     <meta property="og:locale" content="id_ID">
     <meta property="og:type" content="product">
     <meta property="og:url" content="https://umkmjenggikutara.com/detail.php?id=<?= $id ?>">
-    <meta property="og:title" content="<?= htmlspecialchars($product['nama_produk']) ?> - UMKM Desa Jenggik">
+    <meta property="og:title" content="<?= htmlspecialchars($product['nama_produk']) ?> - UMKM Desa Jenggik Utara">
     <meta property="og:description" content="<?= htmlspecialchars(substr(strip_tags($product['deskripsi']), 0, 155)) ?>...">
     <meta property="og:image" content="https://umkmjenggikutara.com/<?= htmlspecialchars($product['gambar_umkm']) ?>">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://umkmjenggikutara.com/detail.php?id=<?= $id ?>">
-    <meta property="twitter:title" content="<?= htmlspecialchars($product['nama_produk']) ?> - UMKM Desa Jenggik">
+    <meta property="twitter:title" content="<?= htmlspecialchars($product['nama_produk']) ?> - UMKM Desa Jenggik Utara">
     <meta property="twitter:description" content="<?= htmlspecialchars(substr(strip_tags($product['deskripsi']), 0, 155)) ?>...">
     <meta property="twitter:image" content="https://umkmjenggikutara.com/<?= htmlspecialchars($product['gambar_umkm']) ?>">
 
-    <title><?= htmlspecialchars($product['nama_produk']) ?> - UMKM Desa Jenggik</title>
+    <title><?= htmlspecialchars($product['nama_produk']) ?> - UMKM Desa Jenggik Utara</title>
     <link rel="canonical" href="https://umkmjenggikutara.com/detail.php?id=<?= $id ?>">
     
     <!-- Favicon / App Icons -->

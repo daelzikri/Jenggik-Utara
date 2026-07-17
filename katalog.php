@@ -32,8 +32,8 @@ if ($pdo) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1A3626">
-    <meta name="description" content="Katalog lengkap produk unggulan UMKM Desa Jenggik Utara. Temukan berbagai produk karya asli masyarakat desa mulai dari Gula Aren hingga Kerajinan Bambu.">
-    <meta name="keywords" content="Katalog UMKM Jenggik Utara, Belanja Produk Desa, Gula Semut Jenggik, Jajanan Tradisional Lombok, Kerajinan Anyaman Bambu">
+    <meta name="description" content="Jenggik Utara - Katalog lengkap produk unggulan UMKM Desa Jenggik Utara. Temukan berbagai produk karya asli masyarakat desa mulai dari Gula Aren hingga Kerajinan Bambu.">
+    <meta name="keywords" content="Jenggik Utara, Katalog UMKM Jenggik Utara, Belanja Produk Desa Jenggik Utara, Gula Semut Jenggik Utara, Jajanan Tradisional Lombok, Kerajinan Anyaman Bambu">
     <meta name="author" content="Pemdes Jenggik Utara">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Indonesian">
@@ -42,18 +42,18 @@ if ($pdo) {
     <meta property="og:locale" content="id_ID">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://umkmjenggikutara.com/katalog.php">
-    <meta property="og:title" content="Gerai UMKM - Desa Jenggik">
+    <meta property="og:title" content="Gerai UMKM - Desa Jenggik Utara">
     <meta property="og:description" content="Katalog produk unggulan UMKM Desa Jenggik Utara. Temukan berbagai karya asli masyarakat desa kami.">
     <meta property="og:image" content="https://umkmjenggikutara.com/assets/beranda/beranda2.jpg">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://umkmjenggikutara.com/katalog.php">
-    <meta property="twitter:title" content="Gerai UMKM - Desa Jenggik">
+    <meta property="twitter:title" content="Gerai UMKM - Desa Jenggik Utara">
     <meta property="twitter:description" content="Katalog produk unggulan UMKM Desa Jenggik Utara. Temukan berbagai karya asli masyarakat desa kami.">
     <meta property="twitter:image" content="https://umkmjenggikutara.com/assets/beranda/beranda2.jpg">
 
-    <title>Gerai UMKM - Desa Jenggik</title>
+    <title>Gerai UMKM - Desa Jenggik Utara</title>
     <link rel="canonical" href="https://umkmjenggikutara.com/katalog.php">
     
     <!-- Favicon / App Icons -->
