@@ -46,12 +46,49 @@ if ($pdo) {
     }
 
     // Fetch Testimoni
-    $stmt = $pdo->query("SELECT * FROM testimoni ORDER BY id DESC LIMIT 5");
+    try {
+        $stmt = $pdo->query("SELECT * FROM testimoni WHERE is_visible = 1 ORDER BY id DESC LIMIT 5");
+    } catch (PDOException $e) {
+        // Fallback for when column does not exist yet
+        $stmt = $pdo->query("SELECT * FROM testimoni ORDER BY id DESC LIMIT 5");
+    }
     $db_testi = $stmt->fetchAll();
     if ($db_testi) {
         $testimoni_list = $db_testi;
     }
 }
+
+// Handle new testimoni submission from user
+$submit_message = '';
+if (isset($_POST['submit_testimoni']) && $pdo) {
+    $nama = $_POST['nama_pengirim'] ?? '';
+    $jabatan = $_POST['jabatan'] ?? '';
+    $isi = $_POST['isi_testimoni'] ?? '';
+    $rating = (int)($_POST['rating'] ?? 5);
+    
+    if (!empty($nama) && !empty($isi)) {
+        try {
+            $stmt = $pdo->prepare("INSERT INTO testimoni (nama_pengirim, jabatan, isi_testimoni, rating, is_visible) VALUES (?, ?, ?, ?, 0)");
+            $stmt->execute([$nama, $jabatan, $isi, $rating]);
+            $submit_message = '<div style="background:#e8f5e9; color:#2e7d32; padding:15px; text-align:center; margin-bottom: 20px; border-radius: 5px; font-weight:bold;">Terima kasih! Testimoni Anda telah dikirim dan menunggu persetujuan admin.</div>';
+        } catch (PDOException $e) {
+            // Attempt auto create column if error
+            if (strpos($e->getMessage(), "Unknown column 'is_visible'") !== false) {
+                 try {
+                     $pdo->exec("ALTER TABLE testimoni ADD COLUMN is_visible TINYINT(1) DEFAULT 1 AFTER rating");
+                     $stmt = $pdo->prepare("INSERT INTO testimoni (nama_pengirim, jabatan, isi_testimoni, rating, is_visible) VALUES (?, ?, ?, ?, 0)");
+                     $stmt->execute([$nama, $jabatan, $isi, $rating]);
+                     $submit_message = '<div style="background:#e8f5e9; color:#2e7d32; padding:15px; text-align:center; margin-bottom: 20px; border-radius: 5px; font-weight:bold;">Terima kasih! Testimoni Anda telah dikirim dan menunggu persetujuan admin.</div>';
+                 } catch(PDOException $ex) {
+                     $submit_message = '<div style="background:#ffebee; color:#c62828; padding:15px; text-align:center; margin-bottom: 20px; border-radius: 5px;">Gagal mengirim testimoni. Silakan coba lagi.</div>';
+                 }
+            } else {
+                 $submit_message = '<div style="background:#ffebee; color:#c62828; padding:15px; text-align:center; margin-bottom: 20px; border-radius: 5px;">Gagal mengirim testimoni. Silakan coba lagi.</div>';
+            }
+        }
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -224,8 +261,14 @@ if ($pdo) {
 
     <!-- Testimoni -->
     <section id="testimoni">
-        <div class="testimonials">
+        <div class="testimonials" style="position: relative;">
             <h2 class="section-title">Apa Kata Mereka</h2>
+            <div style="text-align: center; margin-bottom: 30px;">
+                <button id="btnTambahTesti" class="btn" style="background: var(--primary-dark); padding: 10px 25px; cursor: pointer;">Tambahkan Testimoni Anda</button>
+            </div>
+            
+            <?= $submit_message ?>
+
             <div class="testi-slider" id="testiSlider">
                 <?php foreach($testimoni_list as $index => $testi): ?>
                 <div class="testi-slide <?= $index === 0 ? 'active' : '' ?>">
@@ -316,6 +359,39 @@ if ($pdo) {
         </div>
     </footer>
 
+    <!-- Testimoni Modal -->
+    <div id="testiModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative;">
+            <button id="closeTestiModal" style="position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: #333;">&times;</button>
+            <h3 style="margin-top: 0; color: var(--primary-dark); margin-bottom: 20px; text-align:center;">Tambahkan Testimoni Anda</h3>
+            <form method="POST" action="index.php#testimoni">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Nama Anda</label>
+                    <input type="text" name="nama_pengirim" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Profesi / Peran (Opsional)</label>
+                    <input type="text" name="jabatan" placeholder="Misal: Wisatawan, Pelanggan" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Rating</label>
+                    <select name="rating" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit;">
+                        <option value="5">5 Bintang - Sangat Bagus</option>
+                        <option value="4">4 Bintang - Bagus</option>
+                        <option value="3">3 Bintang - Cukup</option>
+                        <option value="2">2 Bintang - Kurang</option>
+                        <option value="1">1 Bintang - Sangat Kurang</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Pesan Anda</label>
+                    <textarea name="isi_testimoni" required rows="4" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit;"></textarea>
+                </div>
+                <button type="submit" name="submit_testimoni" class="btn" style="width: 100%; padding: 12px; background: var(--secondary-color); color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-align: center;">Kirim Testimoni</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         // Hero Carousel Script
         const slides = document.querySelectorAll('.carousel-slide');
@@ -359,6 +435,25 @@ if ($pdo) {
             if (menuBtn && navLinks) {
                 menuBtn.addEventListener('click', () => {
                     navLinks.classList.toggle('active');
+                });
+            }
+
+            // Testimoni Modal Logic
+            const btnTambahTesti = document.getElementById('btnTambahTesti');
+            const testiModal = document.getElementById('testiModal');
+            const closeTestiModal = document.getElementById('closeTestiModal');
+
+            if (btnTambahTesti && testiModal && closeTestiModal) {
+                btnTambahTesti.addEventListener('click', () => {
+                    testiModal.style.display = 'flex';
+                });
+                closeTestiModal.addEventListener('click', () => {
+                    testiModal.style.display = 'none';
+                });
+                window.addEventListener('click', (e) => {
+                    if (e.target === testiModal) {
+                        testiModal.style.display = 'none';
+                    }
                 });
             }
         });

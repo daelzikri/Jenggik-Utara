@@ -15,6 +15,31 @@ if (isset($_GET['delete'])) {
     }
 }
 
+// Toggle visibility
+if (isset($_GET['toggle']) && isset($_GET['val'])) {
+    $id = (int)$_GET['toggle'];
+    $val = (int)$_GET['val'];
+    try {
+        $stmt = $pdo->prepare("UPDATE testimoni SET is_visible = ? WHERE id = ?");
+        $stmt->execute([$val, $id]);
+        $message = 'Status testimoni berhasil diubah!';
+    } catch (PDOException $e) {
+        // If column is_visible doesn't exist yet, we can try to create it here
+        if (strpos($e->getMessage(), "Unknown column 'is_visible'") !== false) {
+            try {
+                $pdo->exec("ALTER TABLE testimoni ADD COLUMN is_visible TINYINT(1) DEFAULT 1 AFTER rating");
+                $stmt = $pdo->prepare("UPDATE testimoni SET is_visible = ? WHERE id = ?");
+                $stmt->execute([$val, $id]);
+                $message = 'Kolom status ditambahkan dan status testimoni berhasil diubah!';
+            } catch (PDOException $ex) {
+                $message = 'Gagal mengubah status: ' . $ex->getMessage();
+            }
+        } else {
+            $message = 'Gagal mengubah status: ' . $e->getMessage();
+        }
+    }
+}
+
 // Add testimoni (simple form)
 if (isset($_POST['add_testimoni'])) {
     $nama = $_POST['nama_pengirim'] ?? '';
@@ -24,11 +49,22 @@ if (isset($_POST['add_testimoni'])) {
 
     if (!empty($nama) && !empty($isi)) {
         try {
-            $stmt = $pdo->prepare("INSERT INTO testimoni (nama_pengirim, jabatan, isi_testimoni, rating) VALUES (?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO testimoni (nama_pengirim, jabatan, isi_testimoni, rating, is_visible) VALUES (?, ?, ?, ?, 1)");
             $stmt->execute([$nama, $jabatan, $isi, $rating]);
             $message = 'Testimoni baru berhasil ditambahkan!';
         } catch (PDOException $e) {
-            $message = 'Gagal menambah: ' . $e->getMessage();
+            if (strpos($e->getMessage(), "Unknown column 'is_visible'") !== false) {
+                 try {
+                     $pdo->exec("ALTER TABLE testimoni ADD COLUMN is_visible TINYINT(1) DEFAULT 1 AFTER rating");
+                     $stmt = $pdo->prepare("INSERT INTO testimoni (nama_pengirim, jabatan, isi_testimoni, rating, is_visible) VALUES (?, ?, ?, ?, 1)");
+                     $stmt->execute([$nama, $jabatan, $isi, $rating]);
+                     $message = 'Testimoni baru berhasil ditambahkan!';
+                 } catch(PDOException $ex) {
+                     $message = 'Gagal menambah: ' . $ex->getMessage();
+                 }
+            } else {
+                 $message = 'Gagal menambah: ' . $e->getMessage();
+            }
         }
     }
 }
@@ -79,6 +115,7 @@ $testimoni_list = $stmt->fetchAll();
                 <th>Jabatan</th>
                 <th>Rating</th>
                 <th>Isi</th>
+                <th>Status</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -92,7 +129,19 @@ $testimoni_list = $stmt->fetchAll();
                     <td><?= $row['rating'] ?> ★</td>
                     <td><?= htmlspecialchars($row['isi_testimoni']) ?></td>
                     <td>
+                        <?php 
+                        // Fallback check if column is_visible exists on old rows before update
+                        $is_visible = isset($row['is_visible']) ? $row['is_visible'] : 1; 
+                        ?>
+                        <?= $is_visible ? '<span style="color:green;font-weight:bold;">Tampil</span>' : '<span style="color:gray;">Disembunyikan</span>' ?>
+                    </td>
+                    <td>
                         <div class="action-buttons">
+                            <?php if($is_visible): ?>
+                                <a href="testimoni.php?toggle=<?= $row['id'] ?>&val=0" class="btn btn-warning btn-sm" style="margin-right:5px; background-color:#ff9800; color:white;">Sembunyikan</a>
+                            <?php else: ?>
+                                <a href="testimoni.php?toggle=<?= $row['id'] ?>&val=1" class="btn btn-success btn-sm" style="margin-right:5px;">Tampilkan</a>
+                            <?php endif; ?>
                             <a href="testimoni.php?delete=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus testimoni ini?');">Hapus</a>
                         </div>
                     </td>
