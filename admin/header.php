@@ -37,11 +37,28 @@ require_once '../backend/koneksi.php';
         .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         .btn-sm { padding: 6px 12px; font-size: 0.85rem; border-radius: 4px; }
+        /* Mobile Responsiveness */
+        .menu-toggle { display: none; background: #1e293b; color: white; padding: 15px; text-align: center; font-size: 1.2rem; cursor: pointer; border: none; width: 100%; font-weight: bold; }
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .menu-toggle { display: block; }
+            .sidebar { width: 100%; display: none; }
+            .sidebar.active { display: flex; }
+            .main-content { padding: 15px; width: 100%; box-sizing: border-box; }
+            .header { flex-direction: column; gap: 15px; text-align: center; }
+            table { display: block; overflow-x: auto; white-space: nowrap; }
+            .card { padding: 15px; }
+            .form-control { width: 100%; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+        ☰ Menu Admin
+    </button>
+
+    <div class="sidebar" id="sidebar">
         <h2>Admin Panel</h2>
         <a href="index.php">Dashboard</a>
         <a href="profil.php">Profil Desa</a>

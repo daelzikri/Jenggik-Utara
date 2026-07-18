@@ -15,7 +15,7 @@ if ($pdo) {
 ?>
 
 <h2>Ringkasan Statistik</h2>
-<div style="display: flex; gap: 20px;">
+<div style="display: flex; gap: 20px; flex-wrap: wrap;">
     <div class="card" style="flex: 1; text-align: center;">
         <h1 style="font-size: 3rem; margin: 0; color: #2980b9;"><?= $count_umkm ?></h1>
         <p style="color: #7f8c8d; font-weight: 600;">Total UMKM</p>
