@@ -62,13 +62,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pesan_wa = $_POST['pesan_wa_default'] ?? '';
     $link_facebook = $_POST['link_facebook'] ?? '';
 
+    // Handle Alur Proses
+    $alur_judul = $_POST['alur_judul'] ?? [];
+    $alur_deskripsi = $_POST['alur_deskripsi'] ?? [];
+    $alur_proses_arr = [];
+    for($i = 0; $i < count($alur_judul); $i++) {
+        if(trim($alur_judul[$i]) !== '') {
+            $alur_proses_arr[] = [
+                'judul' => trim($alur_judul[$i]),
+                'deskripsi' => trim($alur_deskripsi[$i])
+            ];
+        }
+    }
+    $alur_proses_json = empty($alur_proses_arr) ? null : json_encode($alur_proses_arr);
+
     if (!empty($nama) && !empty($deskripsi)) {
         try {
+            // Check and auto-add alur_proses column if it doesn't exist
+            try {
+                $pdo->query("SELECT alur_proses FROM umkm LIMIT 1");
+            } catch (PDOException $e) {
+                try {
+                    $pdo->exec("ALTER TABLE umkm ADD COLUMN alur_proses TEXT NULL AFTER informasi_tambahan");
+                } catch (PDOException $ex) {}
+            }
+            
             $pdo->beginTransaction();
             if ($is_edit) {
                 // Update
-                $stmt = $pdo->prepare("UPDATE umkm SET nama_produk=?, tagline=?, deskripsi=?, latar_belakang_usaha=?, informasi_tambahan=?, gambar_umkm=?, logo_umkm=?, proses_umkm=?, slug=? WHERE id=?");
-                $stmt->execute([$nama, $tagline, $deskripsi, $latar, $info, $gambar, $logo, $proses, $slug, $id]);
+                $stmt = $pdo->prepare("UPDATE umkm SET nama_produk=?, tagline=?, deskripsi=?, latar_belakang_usaha=?, informasi_tambahan=?, gambar_umkm=?, logo_umkm=?, proses_umkm=?, slug=?, alur_proses=? WHERE id=?");
+                $stmt->execute([$nama, $tagline, $deskripsi, $latar, $info, $gambar, $logo, $proses, $slug, $alur_proses_json, $id]);
 
                 // Update / Insert Kontak
                 $stmt_check = $pdo->prepare("SELECT id FROM kontak WHERE umkm_id=?");
@@ -81,8 +104,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = "Data UMKM berhasil diupdate!";
             } else {
                 // Insert
-                $stmt = $pdo->prepare("INSERT INTO umkm (nama_produk, tagline, deskripsi, latar_belakang_usaha, informasi_tambahan, gambar_umkm, logo_umkm, proses_umkm, slug) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$nama, $tagline, $deskripsi, $latar, $info, $gambar, $logo, $proses, $slug]);
+                $stmt = $pdo->prepare("INSERT INTO umkm (nama_produk, tagline, deskripsi, latar_belakang_usaha, informasi_tambahan, gambar_umkm, logo_umkm, proses_umkm, slug, alur_proses) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$nama, $tagline, $deskripsi, $latar, $info, $gambar, $logo, $proses, $slug, $alur_proses_json]);
                 $new_id = $pdo->lastInsertId();
 
                 $pdo->prepare("INSERT INTO kontak (umkm_id, no_wa, pesan_wa_default, link_facebook) VALUES (?, ?, ?, ?)")->execute([$new_id, $no_wa, $pesan_wa, $link_facebook]);
@@ -144,6 +167,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <textarea name="informasi_tambahan" class="form-control" rows="3"><?= htmlspecialchars($umkm['informasi_tambahan'] ?? '') ?></textarea>
         </div>
 
+        <h3>Alur Proses Kerja</h3>
+        <div id="alur-proses-container">
+            <?php 
+            $alur_data = [];
+            if (!empty($umkm['alur_proses'])) {
+                $alur_data = json_decode($umkm['alur_proses'], true);
+            }
+            if (empty($alur_data)) {
+                // Default 1 empty input
+                $alur_data = [['judul' => '', 'deskripsi' => '']];
+            }
+            ?>
+            <?php foreach($alur_data as $index => $alur): ?>
+            <div class="alur-item" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; position: relative;">
+                <button type="button" class="btn btn-danger btn-sm" style="position: absolute; right: 10px; top: 10px;" onclick="this.parentElement.remove()">Hapus</button>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label>Judul Proses</label>
+                    <input type="text" name="alur_judul[]" class="form-control" value="<?= htmlspecialchars($alur['judul']) ?>" placeholder="Misal: Pemesanan & Uang Muka">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Deskripsi Proses</label>
+                    <textarea name="alur_deskripsi[]" class="form-control" rows="2" placeholder="Jelaskan langkah ini..."><?= htmlspecialchars($alur['deskripsi']) ?></textarea>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <button type="button" class="btn btn-info" onclick="tambahAlur()" style="margin-bottom: 20px;">+ Tambah Tahap Proses</button>
+
         <h3>Galeri & Foto</h3>
         <div class="form-group">
             <label>Upload Foto Produk Utama (Biarkan kosong jika tidak ingin mengubah)</label>
@@ -188,5 +239,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <a href="umkm.php" class="btn" style="background:#7f8c8d;">Batal</a>
     </form>
 </div>
+
+<script>
+function tambahAlur() {
+    const container = document.getElementById('alur-proses-container');
+    const html = `
+        <div class="alur-item" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; position: relative;">
+            <button type="button" class="btn btn-danger btn-sm" style="position: absolute; right: 10px; top: 10px;" onclick="this.parentElement.remove()">Hapus</button>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Judul Proses</label>
+                <input type="text" name="alur_judul[]" class="form-control" placeholder="Misal: Pemesanan & Uang Muka">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Deskripsi Proses</label>
+                <textarea name="alur_deskripsi[]" class="form-control" rows="2" placeholder="Jelaskan langkah ini..."></textarea>
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', html);
+}
+</script>
 
 <?php require_once 'footer.php'; ?>
