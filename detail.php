@@ -1,7 +1,11 @@
 <?php
 require_once 'backend/koneksi.php';
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$slug = isset($_GET['slug']) ? $_GET['slug'] : '';
+if ($id === 0 && empty($slug)) {
+    $id = 1; // Default fallback
+}
 $product = null;
 $kontak = null;
 
@@ -41,11 +45,17 @@ $dummy_products = [
 
 if ($pdo) {
     // Fetch from DB
-    $stmt = $pdo->prepare("SELECT * FROM umkm WHERE id = ?");
-    $stmt->execute([$id]);
+    if (!empty($slug)) {
+        $stmt = $pdo->prepare("SELECT * FROM umkm WHERE slug = ?");
+        $stmt->execute([$slug]);
+    } else {
+        $stmt = $pdo->prepare("SELECT * FROM umkm WHERE id = ?");
+        $stmt->execute([$id]);
+    }
     $db_prod = $stmt->fetch();
     
     if ($db_prod) {
+        $id = $db_prod['id']; // Update ID untuk kontak
         $product = $db_prod;
         
         $stmt_kontak = $pdo->prepare("SELECT * FROM kontak WHERE umkm_id = ?");

@@ -4,8 +4,8 @@ require_once 'backend/koneksi.php';
 // Fallback Data if DB is not connected
 $profil_desa = [
     'judul_profil' => 'Profil Desa Jenggik Utara',
-    'potensi_desa' => 'Pertanian (Alpukat, Manggis, Durian) dan Ekonomi Kreatif (Anyaman Bambu, Gula Aren, Jajanan Tradisional)',
-    'informasi_desa' => "Jenggik Utara adalah desa yang terletak di dataran tinggi dengan ketinggian sekitar 400 mdpl, terdiri dari 11 dusun yang membentang dari utara ke selatan. Udara di sini sejuk dan tanahnya subur, menjadikan pertanian sebagai salah satu tulang punggung kehidupan warganya, dengan komoditas unggulan seperti alpukat, manggis, dan durian. Selain bertani, sebagian besar warga juga berprofesi sebagai buruh lepas, Pekerja Migran Indonesia (PMI), dan peternak.\n\nSebagai Desa Berdaya, Jenggik Utara juga punya potensi ekonomi kreatif yang menjanjikan, terutama dari kerajinan anyaman bambu hasil tangan terampil warga lokal. Melalui program digitalisasi UMKM, kami hadir untuk membantu mengangkat produk-produk unggulan desa mulai dari anyaman bambu, VCO, gula aren, jajanan tradisional hingga hasil olahan lokal lainnya agar lebih dikenal luas dan bernilai jual tinggi.\n\nDi ketinggian 400 mdpl, tempat udara sejuk berpadu dengan tanah yang subur, berdirilah Jenggik Utara desa dengan 11 dusun yang menyimpan kekayaan alam berupa alpukat, manggis, dan durian. Di balik kesahajaan warganya yang bertani, beternak, dan merantau sebagai Pekerja Migran Indonesia, tersimpan kearifan tangan-tangan terampil pengrajin anyaman bambu yang terus dijaga turun-temurun.\n\nKini, sebagai Desa Berdaya, Jenggik Utara melangkah maju merangkul dunia digital menghadirkan anyaman bambu, VCO, gula aren, dan jajanan tradisional beserta hasil bumi lokal lainnya ke hadapan dunia yang lebih luas.",
+    'potensi_desa' => 'Pusat UMKM Lokal: VCO (Minyak Kelapa), Klepon, Anyaman Bambu, Gula Aren, dan Aneka Jajanan Tradisional',
+    'informasi_desa' => "Jenggik Utara adalah desa yang terletak di dataran tinggi dengan ketinggian sekitar 400 mdpl, terdiri dari 11 dusun yang membentang dari utara ke selatan. Udara di sini sejuk dan tanahnya subur, menjadikan desa ini kaya akan potensi alam dan ekonomi kreatif masyarakatnya.\n\nSebagai Desa Berdaya, Jenggik Utara memiliki ragam potensi UMKM yang menjadi kebanggaan lokal. Kami sangat mengutamakan 5 produk unggulan desa: VCO (Minyak Kelapa) murni, Klepon legendaris, Kerajinan Anyaman Bambu hasil tangan terampil warga, Gula Aren asli dari nira pilihan, serta Aneka Jajanan Tradisional lainnya yang terus dilestarikan.\n\nMelalui program digitalisasi UMKM ini, kami hadir untuk membantu mengangkat produk-produk unggulan tersebut agar lebih dikenal luas dan bernilai jual tinggi. Setiap pembelian Anda adalah bentuk dukungan langsung bagi perekonomian warga Desa Jenggik Utara.",
     'gambar_desa' => 'assets/beranda/kantor desa.jpg'
 ];
 
@@ -39,7 +39,7 @@ if ($pdo) {
     }
 
     // Fetch UMKM Sorotan
-    $stmt = $pdo->query("SELECT id, nama_produk, tagline, gambar_umkm FROM umkm ORDER BY id ASC LIMIT 3");
+    $stmt = $pdo->query("SELECT id, slug, nama_produk, tagline, gambar_umkm FROM umkm ORDER BY id ASC LIMIT 3");
     $db_umkm = $stmt->fetchAll();
     if ($db_umkm) {
         $umkm_sorotan = $db_umkm;
@@ -96,8 +96,8 @@ if (isset($_POST['submit_testimoni']) && $pdo) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1A3626">
-    <meta name="description" content="Jenggik Utara - Website resmi Desa Jenggik Utara. Jelajahi keindahan alam, potensi desa, dan katalog lengkap produk unggulan UMKM lokal kami seperti Gula Aren dan Anyaman Bambu.">
-    <meta name="keywords" content="Jenggik Utara, Desa Jenggik Utara, KKN PMD UNRAM, UMKM Desa Jenggik Utara, Gula Aren Jenggik Utara, Anyaman Bambu, Wisata Desa Jenggik Utara, Karsaloka, Produk Lokal Lombok Timur">
+    <meta name="description" content="Jenggik Utara - Website resmi Desa Jenggik Utara. Jelajahi keindahan alam, potensi desa, dan katalog lengkap produk unggulan UMKM lokal kami seperti VCO, Klepon, Anyaman Bambu, Gula Aren, dan Jajanan Tradisional.">
+    <meta name="keywords" content="Jenggik Utara, Desa Jenggik Utara, KKN PMD UNRAM, UMKM Desa Jenggik Utara, VCO Jenggik Utara, Klepon, Anyaman Bambu, Gula Aren, Jajanan Tradisional Lombok, Karsaloka">
     <meta name="author" content="Pemdes Jenggik Utara">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Indonesian">
@@ -206,13 +206,17 @@ if (isset($_POST['submit_testimoni']) && $pdo) {
         <div class="profile-content">
             <div class="profile-image">
                 <img src="<?= htmlspecialchars($profil_desa['gambar_desa']) ?>" alt="Profil Desa">
-                <!-- Floating badge -->
-                <div style="position: absolute; bottom: -15px; left: -15px; background: white; padding: 15px; border-radius: 50%; box-shadow: var(--shadow-sm); z-index: 5;">
-                    <span style="font-size: 1.5rem;">🌾</span>
-                </div>
             </div>
             <div class="profile-text">
                 <h3 style="font-size: 2.2rem; color: var(--primary-dark); font-weight: 800; line-height: 1.2; margin-bottom: 1rem;"><?= htmlspecialchars($profil_desa['judul_profil']) ?></h3>
+                
+                <?php if(!empty($profil_desa['potensi_desa'])): ?>
+                <div style="background: rgba(217, 119, 70, 0.1); border-left: 4px solid var(--secondary-color); padding: 15px; margin-bottom: 20px; border-radius: 0 8px 8px 0;">
+                    <strong style="color: var(--secondary-color); display: block; margin-bottom: 5px;">Potensi Unggulan:</strong>
+                    <span style="color: #444; font-weight: 600; line-height: 1.5;"><?= htmlspecialchars($profil_desa['potensi_desa']) ?></span>
+                </div>
+                <?php endif; ?>
+
                 <p style="margin-bottom: 20px; font-size: 1.1rem; color: #555; text-align: justify;"><?= nl2br(htmlspecialchars($profil_desa['informasi_desa'])) ?></p>
                 <div style="display: flex; gap: 2rem; margin-top: 2rem;">
                     <div>
@@ -244,7 +248,7 @@ if (isset($_POST['submit_testimoni']) && $pdo) {
                     <h3 class="product-title"><?= htmlspecialchars($umkm['nama_produk']) ?></h3>
                     <p class="product-tagline"><?= htmlspecialchars($umkm['tagline']) ?></p>
                     <div class="product-action">
-                        <a href="detail.php?id=<?= $umkm['id'] ?>" class="btn">Lihat Detail Produk</a>
+                        <a href="detail.php?<?= !empty($umkm['slug']) ? 'slug=' . urlencode($umkm['slug']) : 'id=' . $umkm['id'] ?>" class="btn">Lihat Detail Produk</a>
                     </div>
                 </div>
             </div>

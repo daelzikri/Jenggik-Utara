@@ -19,7 +19,7 @@ $umkm_list = [
 
 // Fetch from DB if available
 if ($pdo) {
-    $stmt = $pdo->query("SELECT id, nama_produk, tagline, gambar_umkm FROM umkm ORDER BY id ASC");
+    $stmt = $pdo->query("SELECT id, slug, nama_produk, tagline, gambar_umkm FROM umkm ORDER BY id ASC");
     $db_umkm = $stmt->fetchAll();
     if ($db_umkm) {
         $umkm_list = $db_umkm;
@@ -32,8 +32,8 @@ if ($pdo) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1A3626">
-    <meta name="description" content="Jenggik Utara - Katalog lengkap produk unggulan UMKM Desa Jenggik Utara. Temukan berbagai produk karya asli masyarakat desa mulai dari Gula Aren hingga Kerajinan Bambu.">
-    <meta name="keywords" content="Jenggik Utara, Katalog UMKM Jenggik Utara, Belanja Produk Desa Jenggik Utara, Gula Semut Jenggik Utara, Jajanan Tradisional Lombok, Kerajinan Anyaman Bambu">
+    <meta name="description" content="Jenggik Utara - Katalog lengkap produk unggulan UMKM Desa Jenggik Utara. Temukan VCO, Klepon, Anyaman Bambu, Gula Aren, dan Jajanan Tradisional karya asli masyarakat desa.">
+    <meta name="keywords" content="Jenggik Utara, Katalog UMKM Jenggik Utara, Belanja Produk Desa Jenggik Utara, VCO, Klepon, Gula Aren Jenggik Utara, Jajanan Tradisional Lombok, Kerajinan Anyaman Bambu">
     <meta name="author" content="Pemdes Jenggik Utara">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Indonesian">
@@ -136,7 +136,7 @@ if ($pdo) {
                     <h3 class="product-title"><?= htmlspecialchars($umkm['nama_produk']) ?></h3>
                     <p class="product-tagline"><?= htmlspecialchars($umkm['tagline']) ?></p>
                     <div class="product-action">
-                        <a href="detail.php?id=<?= $umkm['id'] ?>" class="btn">Lihat Detail Produk</a>
+                        <a href="detail.php?<?= !empty($umkm['slug']) ? 'slug=' . urlencode($umkm['slug']) : 'id=' . $umkm['id'] ?>" class="btn">Lihat Detail Produk</a>
                     </div>
                 </div>
             </div>
