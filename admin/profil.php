@@ -4,6 +4,7 @@ require_once 'header.php';
 $message = '';
 $error = '';
 
+$upload_error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $judul = $_POST['judul_profil'] ?? '';
     $potensi = $_POST['potensi_desa'] ?? '';
@@ -12,16 +13,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle image upload
     $gambar = $_POST['old_gambar_desa'] ?? '';
     if (isset($_FILES['gambar_desa']) && $_FILES['gambar_desa']['error'] === UPLOAD_ERR_OK) {
-        $targetDir = '../assets/beranda/';
-        if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
-        $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9.\-_]/', '', basename($_FILES['gambar_desa']["name"]));
-        $targetPath = $targetDir . $filename;
-        if (move_uploaded_file($_FILES['gambar_desa']["tmp_name"], $targetPath)) {
-            $gambar = substr($targetPath, 3); // Remove '../' for DB
+        if ($_FILES['gambar_desa']['size'] > 3145728) {
+            $upload_error = "Ukuran file melebihi batas maksimal 3 MB.";
+        } else {
+            $targetDir = '../assets/beranda/';
+            if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+            
+            $originalName = basename($_FILES['gambar_desa']["name"]);
+            $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+            $baseName = time() . '_' . preg_replace('/[^a-zA-Z0-9.\-_]/', '', pathinfo($originalName, PATHINFO_FILENAME));
+            $targetPathWebp = $targetDir . $baseName . '.webp';
+            
+            $sourcePath = $_FILES['gambar_desa']["tmp_name"];
+            $info = @getimagesize($sourcePath);
+            $converted = false;
+            
+            if ($info !== false) {
+                $mime = $info['mime'];
+                $image = null;
+                switch ($mime) {
+                    case 'image/jpeg': $image = @imagecreatefromjpeg($sourcePath); break;
+                    case 'image/png': 
+                        $image = @imagecreatefrompng($sourcePath);
+                        if ($image) { imagepalettetotruecolor($image); imagealphablending($image, true); imagesavealpha($image, true); }
+                        break;
+                    case 'image/gif': $image = @imagecreatefromgif($sourcePath); break;
+                    case 'image/webp': $image = @imagecreatefromwebp($sourcePath); break;
+                }
+                
+                if ($image !== false && $image !== null) {
+                    if (imagewebp($image, $targetPathWebp, 85)) {
+                        imagedestroy($image);
+                        $gambar = substr($targetPathWebp, 3);
+                        $converted = true;
+                    } else {
+                        imagedestroy($image);
+                    }
+                }
+            }
+            
+            if (!$converted) {
+                $targetPathFallback = $targetDir . $baseName . '.' . $ext;
+                if (move_uploaded_file($sourcePath, $targetPathFallback)) {
+                    $gambar = substr($targetPathFallback, 3);
+                }
+            }
         }
     }
 
-    if (!empty($judul) && !empty($potensi) && !empty($informasi)) {
+    if (!empty($upload_error)) {
+        $error = $upload_error;
+    } elseif (!empty($judul) && !empty($potensi) && !empty($informasi)) {
         try {
             $stmt = $pdo->prepare("UPDATE profile_desa SET judul_profil = ?, potensi_desa = ?, informasi_desa = ?, gambar_desa = ? WHERE id = 1");
             $stmt->execute([$judul, $potensi, $informasi, $gambar]);

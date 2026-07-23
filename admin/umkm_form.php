@@ -22,15 +22,65 @@ if ($is_edit) {
     }
 }
 
+$upload_error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Helper function for upload
     function handleUpload($fileArray, $targetDir = '../assets/umkm/') {
+        global $upload_error;
         if (isset($fileArray) && $fileArray['error'] === UPLOAD_ERR_OK) {
+            // Check size (3MB = 3 * 1024 * 1024)
+            if ($fileArray['size'] > 3145728) {
+                $upload_error = "Ukuran file " . htmlspecialchars($fileArray['name']) . " melebihi 3MB.";
+                return false;
+            }
+
             if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
-            $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9.\-_]/', '', basename($fileArray["name"]));
-            $targetPath = $targetDir . $filename;
-            if (move_uploaded_file($fileArray["tmp_name"], $targetPath)) {
-                return substr($targetPath, 3); // Remove '../' for DB
+            
+            // Base filename
+            $originalName = basename($fileArray["name"]);
+            $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+            $baseName = time() . '_' . preg_replace('/[^a-zA-Z0-9.\-_]/', '', pathinfo($originalName, PATHINFO_FILENAME));
+            $targetPathWebp = $targetDir . $baseName . '.webp';
+            
+            // Convert to webp
+            $sourcePath = $fileArray["tmp_name"];
+            $info = @getimagesize($sourcePath);
+            
+            if ($info !== false) {
+                $mime = $info['mime'];
+                $image = null;
+                switch ($mime) {
+                    case 'image/jpeg':
+                        $image = @imagecreatefromjpeg($sourcePath);
+                        break;
+                    case 'image/png':
+                        $image = @imagecreatefrompng($sourcePath);
+                        if ($image) {
+                            imagepalettetotruecolor($image);
+                            imagealphablending($image, true);
+                            imagesavealpha($image, true);
+                        }
+                        break;
+                    case 'image/gif':
+                        $image = @imagecreatefromgif($sourcePath);
+                        break;
+                    case 'image/webp':
+                        $image = @imagecreatefromwebp($sourcePath);
+                        break;
+                }
+                
+                if ($image !== false && $image !== null) {
+                    if (imagewebp($image, $targetPathWebp, 85)) {
+                        imagedestroy($image);
+                        return substr($targetPathWebp, 3); // Remove '../' for DB
+                    }
+                    imagedestroy($image);
+                }
+            }
+            // Fallback move if cannot read by GD (or unsupported)
+            $targetPathFallback = $targetDir . $baseName . '.' . $ext;
+            if (move_uploaded_file($sourcePath, $targetPathFallback)) {
+                return substr($targetPathFallback, 3);
             }
         }
         return false;
@@ -76,7 +126,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $alur_proses_json = empty($alur_proses_arr) ? null : json_encode($alur_proses_arr);
 
-    if (!empty($nama) && !empty($deskripsi)) {
+    if (!empty($upload_error)) {
+        $error = $upload_error;
+    } elseif (!empty($nama) && !empty($deskripsi)) {
         try {
             // Check and auto-add alur_proses column if it doesn't exist
             try {
@@ -209,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="file" name="logo_umkm" class="form-control" accept="image/*">
             <input type="hidden" name="old_logo_umkm" value="<?= htmlspecialchars($umkm['logo_umkm'] ?? '') ?>">
             <?php if (!empty($umkm['logo_umkm'])): ?>
-                <img src="../<?= htmlspecialchars($umkm['logo_umkm']) ?>" style="width:100px; margin-top:10px; border-radius:5px;">
+                <img src="../<?= htmlspecialchars($umkm['logo_umkm']) ?>" style="width:20px; margin-top:10px; border-radius:5px;">
             <?php endif; ?>
         </div>
         <div class="form-group">
@@ -217,7 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="file" name="proses_umkm" class="form-control" accept="image/*">
             <input type="hidden" name="old_proses_umkm" value="<?= htmlspecialchars($umkm['proses_umkm'] ?? '') ?>">
             <?php if (!empty($umkm['proses_umkm'])): ?>
-                <img src="../<?= htmlspecialchars($umkm['proses_umkm']) ?>" style="width:100px; margin-top:10px; border-radius:5px;">
+                <img src="../<?= htmlspecialchars($umkm['proses_umkm']) ?>" style="width:20px; margin-top:10px; border-radius:5px;">
             <?php endif; ?>
         </div>
 
