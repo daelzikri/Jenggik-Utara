@@ -158,15 +158,15 @@ $wa_url = "https://wa.me/" . $product['no_wa'] . "?text=" . urlencode($product['
                 <?php if(!empty($product['logo_umkm']) || !empty($product['proses_umkm'])): ?>
                 <div style="display: flex; gap: 15px; margin-top: 15px;">
                     <?php if(!empty($product['logo_umkm'])): ?>
-                    <div style="flex: 1;">
+                    <div>
                         <h4 style="margin-bottom: 10px; font-size: 0.9rem; color:var(--primary-dark);">Logo UMKM</h4>
-                        <img src="<?= htmlspecialchars($product['logo_umkm']) ?>" alt="Logo UMKM" style="width: 100%; height: auto; border-radius: 12px; object-fit: cover; aspect-ratio: 1/1; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                        <img src="<?= htmlspecialchars($product['logo_umkm']) ?>" alt="Logo UMKM" style="width: 100px; height: 100px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                     </div>
                     <?php endif; ?>
                     <?php if(!empty($product['proses_umkm'])): ?>
-                    <div style="flex: 1;">
+                    <div>
                         <h4 style="margin-bottom: 10px; font-size: 0.9rem; color:var(--primary-dark);">Proses Produksi</h4>
-                        <img src="<?= htmlspecialchars($product['proses_umkm']) ?>" alt="Proses Produksi" style="width: 100%; height: auto; border-radius: 12px; object-fit: cover; aspect-ratio: 1/1; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                        <img src="<?= htmlspecialchars($product['proses_umkm']) ?>" alt="Proses Produksi" style="width: 100px; height: 100px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                     </div>
                     <?php endif; ?>
                 </div>
